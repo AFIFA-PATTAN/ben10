@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GreyMatter Connect — Peers</title>
+<style>
+  :root{
+    --bg:#0E0E0E;
+    --card:#1E1E1E;
+    --glow:#00FF8C;
+    --muted:#BDBDBD;
+    --text:#FFFFFF;
+    --transition:0.3s ease;
+  }
+
+  /* Basic reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.4;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Subtle animated radial glow behind hero (soft and minimal) */
+  .page-ambient{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(800px 400px at 10% 10%, rgba(0,255,140,0.06), transparent 8%),
+      radial-gradient(600px 300px at 90% 30%, rgba(0,255,140,0.04), transparent 6%),
+      linear-gradient(180deg, rgba(255,255,255,0.01), transparent 40%);
+    mix-blend-mode:screen;
+    animation:ambientShift 8s ease-in-out infinite;
+    opacity:1;
+  }
+  @keyframes ambientShift{
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-6px) scale(1.02); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  /* Navigation */
+  nav.topnav{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:0 22px;
+    z-index:40;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;
+  }
+  .omnitrix{
+    width:44px;height:44px;border-radius:50%;
+    background:conic-gradient(from 180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.5));
+    box-shadow: 0 0 12px rgba(0,255,140,0.08), inset 0 3px 8px rgba(255,255,255,0.02);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .omnitrix::after{
+    content:"";
+    position:absolute;inset:6px;border-radius:50%;
+    border:2px solid var(--glow);
+    box-shadow: 0 0 18px rgba(0,255,140,0.18);
+    filter: blur(0.4px);
+  }
+  .logo-text{
+    font-weight:700;
+    letter-spacing:0.8px;
+    font-family:"Orbitron","Poppins",sans-serif;
+    color:var(--text);
+  }
+
+  .nav-center{
+    display:flex;gap:18px;align-items:center;
+  }
+  .nav-center a{
+    text-decoration:none;color:var(--text);
+    padding:8px 14px;border-radius:10px;
+    transition:color var(--transition), background var(--transition), box-shadow var(--transition);
+    font-weight:600;
+  }
+  .nav-center a:hover{
+    background:var(--glow);
+    color:#000;
+    box-shadow: 0 6px 20px rgba(0,255,140,0.12), 0 0 20px rgba(0,255,140,0.06);
+    transform:translateY(-2px);
+  }
+
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .btn{
+    background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06);
+    padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;
+    transition:all var(--transition);
+  }
+  .btn.primary{
+    background:linear-gradient(180deg, rgba(0,255,140,0.12), rgba(0,255,140,0.06));
+    border:1px solid rgba(0,255,140,0.18);
+    box-shadow: 0 6px 24px rgba(0,255,140,0.06), inset 0 -6px 14px rgba(0,255,140,0.02);
+    color:var(--text);
+  }
+  .btn:hover{
+    transform:translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0,255,140,0.06);
+  }
+
+  main{
+    margin-top:84px;
+    width:100%;
+    max-width:1200px;
+    margin-left:auto;margin-right:auto;
+    padding:28px 22px 84px;
+    z-index:10;
+    position:relative;
+  }
+
+  /* Hero */
+  .hero{
+    padding:36px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+    text-align:center;
+    position:relative;
+  }
+  .hero .title{
+    font-family:"Orbitron","Poppins",sans-serif;
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    color:var(--glow);
+    letter-spacing:1px;
+    text-shadow:
+      0 1px 0 rgba(0,0,0,0.6),
+      0 6px 24px rgba(0,255,140,0.12),
+      0 1px 8px rgba(0,255,140,0.08);
+    font-weight:800;
+    transform: translateZ(0);
+    /* 3D extrusion effect using layered text-shadow */
+    text-shadow:
+      0 2px 0 rgba(0,0,0,0.6),
+      0 6px 18px rgba(0,255,140,0.12),
+      0 0 22px rgba(0,255,140,0.18),
+      -1px 2px 0 rgba(0,0,0,0.25);
+  }
+  .hero .subtitle{
+    color:var(--muted);
+    max-width:820px;
+    font-size:1rem;
+  }
+  .hero .tagline{
+    color:rgba(255,255,255,0.12);
+    font-size:0.85rem;
+    margin-top:6px;
+  }
+  .hero-card{
+    margin-top:18px;
+    padding:14px 18px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width:100%;
+    max-width:880px;
+  }
+
+  /* Directory controls */
+  .controls{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin:22px 0;
+    flex-wrap:wrap;
+  }
+  .search{
+    flex:1 1 320px;
+    display:flex;align-items:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 -6px 12px rgba(0,0,0,0.3);
+  }
+  .search input{
+    background:transparent;border:0;outline:none;color:var(--text);
+    padding:10px 12px;font-size:0.95rem;width:100%;
+  }
+  .search input::placeholder{ color: rgba(0,255,140,0.34); font-weight:600; letter-spacing:0.4px; }
+  .tag-list{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tag{
+    font-weight:600;padding:8px 12px;border-radius:999px;background:transparent;border:1px solid rgba(0,255,140,0.06);
+    color:var(--muted);cursor:pointer;transition:all var(--transition);
+  }
+  .tag:hover, .tag.active{
+    background:var(--glow); color:#000; box-shadow:0 8px 26px rgba(0,255,140,0.06), 0 0 16px rgba(0,255,140,0.05);
+    transform:translateY(-3px);
+  }
+
+  /* Grid */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap:18px;
+    margin-top:6px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:14px;
+    border:1px solid rgba(0,0,0,0.45);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    position:relative;
+    overflow:visible;
+  }
+  .card::before{
+    content:"";
+    position:absolute;inset:-1px;border-radius:13px;
+    pointer-events:none;
+    box-shadow: 0 0 0 1px rgba(0,255,140,0.02);
+    transition: box-shadow var(--transition), transform var(--transition);
+  }
+  .card:hover{
+    transform: translateY(-8px) scale(1.01);
+    border-color: rgba(0,255,140,0.18);
+    box-shadow: 0 22px 44px rgba(0,0,0,0.7), 0 6px 30px rgba(0,255,140,0.04);
+  }
+  .card:hover::before{
+    box-shadow: 0 0 36px rgba(0,255,140,0.12), 0 0 10px rgba(0,255,140,0.06);
+    transform: translateZ(0);
+  }
+
+  .card-head{ display:flex; gap:12px; align-items:center; }
+  .avatar{
+    width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+    border:3px solid rgba(0,255,140,0.08);
+    color:var(--text);
+    font-weight:700;font-size:1.05rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 2px 10px rgba(0,255,140,0.03);
+    position:relative;
+  }
+  .avatar::after{
+    content:"";position:absolute;inset:6px;border-radius:50%;border:2px solid rgba(0,255,140,0.04);
+    box-shadow:0 0 18px rgba(0,255,140,0.06);
+  }
+  .meta{flex:1}
+  .name{font-weight:700;color:var(--text);font-size:1rem}
+  .role{font-size:0.9rem;color:var(--muted);margin-top:4px}
+  .tagline{color:#A8A8A8;margin-top:8px;font-size:0.92rem}
+
+  .card-foot{display:flex;gap:8px;margin-top:12px;align-items:center;}
+  .card .btn{
+    padding:8px 10px;border-radius:10px;font-weight:700;font-size:0.9rem;
+    border:1px solid rgba(255,255,255,0.03);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    color:var(--text);
+  }
+  .card .btn.message{
+    border:1px solid rgba(0,255,140,0.12);
+    background:linear-gradient(180deg, rgba(0,255,140,0.06), rgba(0,255,140,0.02));
+    box-shadow:0 8px 26px rgba(0,255,140,0.04);
+  }
+  .btn:hover{
+    transform:translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  }
+
+  /* Footer */
+  footer{
+    margin-top:auto;
+    padding:20px 22px;
+    border-top:1px solid rgba(255,255,255,0.03);
+    display:flex;justify-content:space-between;align-items:center;
+    gap:12px;
+    max-width:1200px;margin-left:auto;margin-right:auto;
+  }
+  .footer-links a{
+    color:#AAA;text-decoration:none;margin-right:12px;font-weight:600;transition:all var(--transition);
+  }
+  .footer-links a:hover{ color:var(--glow); text-shadow:0 6px 18px rgba(0,255,140,0.06) }
+
+  .footer-sep{ height:1px;width:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent); margin-bottom:10px; }
+
+  /* Modal */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:60;
+    transition:opacity var(--transition);
+  }
+  .modal-backdrop.show{ display:flex; animation:fadeIn .18s ease both; }
+  @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+
+  .modal{
+    width:100%;max-width:420px;padding:20px;border-radius:14px;background:var(--card);border:1px solid rgba(0,255,140,0.06);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 10px 30px rgba(0,255,140,0.04);
+    transform:translateY(6px);
+  }
+  .modal h3{ color:var(--text); font-family:"Poppins", "Orbitron", sans-serif; margin-bottom:6px;}
+  .modal p{ color:var(--muted); margin-bottom:14px; }
+  .modal .modal-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  .modal .btn.ghost{
+    background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);
+  }
+  .close-x{ position:absolute;right:14px;top:10px;cursor:pointer;color:var(--muted); font-weight:800; }
+
+  /* Responsive tweaks */
+  @media (max-width:720px){
+    nav.topnav{height:60px;padding:0 14px}
+    .omnitrix{width:40px;height:40px}
+    .brand .logo-text{font-size:0.95rem}
+    .controls{gap:8px}
+    .hero-card{padding:12px}
+    .avatar{width:52px;height:52px;font-size:0.95rem}
+    .card{padding:12px}
+  }
+</style>
+</head>
+<body>
+  <div class="page-ambient" aria-hidden="true"></div>
+
+  <nav class="topnav" role="navigation" aria-label="Main navigation">
+    <div class="brand">
+      <div class="omnitrix" aria-hidden="true" title="GreyMatter Omnitrix"></div>
+      <div class="logo-text">GreyMatter</div>
+    </div>
+
+    <div class="nav-center" role="menubar" aria-label="Primary">
+      <a href="#" role="menuitem">Home</a>
+      <a href="#" role="menuitem">About</a>
+      <a href="#" role="menuitem">Contact</a>
+      <a href="#" role="menuitem">Feedback</a>
+    </div>
+
+    <div class="nav-right">
+      <button class="btn" id="loginTop" aria-haspopup="dialog">Login</button>
+      <button class="btn primary" id="signupTop" aria-haspopup="dialog">Sign Up</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" aria-labelledby="peers-title">
+      <div class="hero-card">
+        <h1 id="peers-title" class="title">Connect with Your Peers</h1>
+        <p class="subtitle">Discover, interact, and grow with like-minded learners.</p>
+        <div class="tagline">Peer Learning Network — Powered by GreyMatter</div>
+      </div>
+    </section>
+
+    <section class="directory" aria-labelledby="directory-heading" style="margin-top:18px;">
+      <div class="controls" role="region" aria-label="Directory controls">
+        <div class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" style="opacity:.6;margin-left:6px" aria-hidden="true">
+            <path fill="currentColor" d="M9.5 3A6.5 6.5 0 1 1 3 9.5 6.508 6.508 0 0 1 9.5 3m0-2A8.5 8.5 0 1 0 18 9.5 8.51 8.51 0 0 0 9.5 1z"/><path fill="currentColor" d="M21.71 20.29l-5.4-5.4a1 1 0 0 0-1.41 1.41l5.4 5.4a1 1 0 0 0 1.41-1.41z"/>
+          </svg>
+          <input id="searchInput" placeholder="Search peers, skills, topics..." aria-label="Search peers" />
+        </div>
+
+        <div class="tag-list" role="list" aria-label="Filter tags">
+          <button class="tag" data-tag="all">All</button>
+          <button class="tag" data-tag="frontend">Frontend</button>
+          <button class="tag" data-tag="ml">Machine Learning</button>
+          <button class="tag" data-tag="design">Design</button>
+          <button class="tag" data-tag="data">Data Science</button>
+        </div>
+      </div>
+
+      <div class="grid" id="peersGrid" aria-live="polite">
+        <!-- Example peer cards -->
+        <article class="card" data-tags="frontend design">
+          <div class="card-head">
+            <div class="avatar" aria-hidden="true">AN</div>
+            <div class="meta">
+              <div class="name">Amina Noor</div>
+              <div class="role">Frontend Developer</div>
+              <div class="tagline">React · TypeScript · Accessible UI</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="ml data">
+          <div class="card-head">
+            <div class="avatar">RJ</div>
+            <div class="meta">
+              <div class="name">Rohit Jain</div>
+              <div class="role">ML Engineer</div>
+              <div class="tagline">PyTorch · Model Ops</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="design">
+          <div class="card-head">
+            <div class="avatar">LP</div>
+            <div class="meta">
+              <div class="name">Luna Park</div>
+              <div class="role">Product Designer</div>
+              <div class="tagline">Figma · Prototyping · Micro-interactions</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="data">
+          <div class="card-head">
+            <div class="avatar">MK</div>
+            <div class="meta">
+              <div class="name">Mohamed Karim</div>
+              <div class="role">Data Scientist</div>
+              <div class="tagline">Pandas · SQL · Visualization</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="frontend">
+          <div class="card-head">
+            <div class="avatar">SJ</div>
+            <div class="meta">
+              <div class="name">Sara Johnson</div>
+              <div class="role">UI Engineer</div>
+              <div class="tagline">CSS · Animations · Design Systems</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="ml">
+          <div class="card-head">
+            <div class="avatar">YT</div>
+            <div class="meta">
+              <div class="name">Yusuf Tan</div>
+              <div class="role">Researcher</div>
+              <div class="tagline">NLP · Transformers</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="data frontend">
+          <div class="card-head">
+            <div class="avatar">EM</div>
+            <div class="meta">
+              <div class="name">Evelyn Moore</div>
+              <div class="role">Fullstack · Data</div>
+              <div class="tagline">Node · React · ETL</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+        <article class="card" data-tags="design">
+          <div class="card-head">
+            <div class="avatar">BG</div>
+            <div class="meta">
+              <div class="name">Ben Grey</div>
+              <div class="role">Creative Technologist</div>
+              <div class="tagline">Generative Design · WebGL</div>
+            </div>
+          </div>
+          <div class="card-foot">
+            <button class="btn message" data-action="open-signup">Message</button>
+            <button class="btn" data-action="open-signup">View Profile</button>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <div class="footer-sep" aria-hidden="true"></div>
+  <footer>
+    <div class="footer-links" role="navigation" aria-label="Footer links">
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Feedback</a>
+    </div>
+    <div style="color:#AAA;font-weight:600">© GreyMatter Connect</div>
+  </footer>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+    <div class="modal" role="document">
+      <div style="position:relative;">
+        <div class="close-x" id="modalClose" aria-label="Close">&times;</div>
+        <h3 id="modalTitle">Please sign up or log in to continue.</h3>
+        <p>Messaging and profiles are available to verified GreyMatter members. Create a free account or sign in to join the community.</p>
+        <div class="modal-actions">
+          <button class="btn ghost" id="modalLogin">Log In</button>
+          <button class="btn primary" id="modalSignup">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Minimal JS for modal behavior and simple filtering/search
+  (function(){
+    const openButtons = document.querySelectorAll('[data-action="open-signup"], #loginTop, #signupTop');
+    const backdrop = document.getElementById('modalBackdrop');
+    const closeX = document.getElementById('modalClose');
+    const modalLogin = document.getElementById('modalLogin');
+    const modalSignup = document.getElementById('modalSignup');
+
+    function openModal(){
+      backdrop.classList.add('show');
+      backdrop.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      backdrop.classList.remove('show');
+      backdrop.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';
+    }
+
+    openButtons.forEach(btn => btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      openModal();
+    }));
+    closeX.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e)=>{
+      if(e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+    // Modal CTA hooks — in a real app these would route to auth
+    modalLogin.addEventListener('click', ()=>{
+      closeModal();
+      // placeholder behaviour - you can replace this with actual routing
+      alert('Redirecting to Log In (placeholder)');
+    });
+    modalSignup.addEventListener('click', ()=>{
+      closeModal();
+      alert('Redirecting to Sign Up (placeholder)');
+    });
+
+    // Simple search & tag filter (client-side, minimal)
+    const search = document.getElementById('searchInput');
+    const tags = document.querySelectorAll('.tag');
+    const cards = document.querySelectorAll('.card');
+
+    let activeTag = 'all';
+
+    function filterCards(){
+      const q = search.value.trim().toLowerCase();
+      cards.forEach(card => {
+        const tagsAttr = card.getAttribute('data-tags') || '';
+        const text = (card.innerText || '').toLowerCase();
+        const matchesTag = (activeTag === 'all') || tagsAttr.split(' ').includes(activeTag);
+        const matchesQuery = !q || text.includes(q);
+        card.style.display = (matchesTag && matchesQuery) ? '' : 'none';
+      });
+    }
+
+    search.addEventListener('input', filterCards);
+
+    tags.forEach(t => {
+      t.addEventListener('click', ()=>{
+        tags.forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        activeTag = t.getAttribute('data-tag') || 'all';
+        filterCards();
+      });
+    });
+
+    // default active tag: All
+    document.querySelector('.tag[data-tag="all"]').classList.add('active');
+
+    // Accessibility: ensure focus trap would be implemented if modal had complex content (omitted for brevity)
+  })();
+</script>
+</body>
+</html>

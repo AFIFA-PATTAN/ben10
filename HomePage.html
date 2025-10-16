@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GreyMatter Connect — The Peer Learning Network</title>
+<style>
+  :root{
+    --bg:#0E0E0E;
+    --card:#1E1E1E;
+    --accent:#00FF8C;
+    --muted:#BFBFBF;
+    --white: #FFFFFF;
+    --ease: all 0.3s ease;
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  /* Reset + base */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 10% 20%, rgba(0,255,140,0.04), transparent 6%),
+                radial-gradient(900px 450px at 90% 80%, rgba(0,255,140,0.02), transparent 8%),
+                var(--bg);
+    color:var(--white);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-y:auto;
+    transition: background var(--ease);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  /* Global transitions */
+  a,button{transition:var(--ease);}
+
+  /* Navigation */
+  .nav{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(1100px,calc(100% - 40px));
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:12px 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 30px rgba(0,0,0,0.35) inset;
+    backdrop-filter: blur(6px);
+    z-index:80;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .nav-left, .nav-center, .nav-right{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .nav-center{gap:28px; justify-content:center; flex:1; order:2;}
+  .nav-left{order:1}
+  .nav-right{order:3}
+
+  /* Logo - Omnitrix style */
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:var(--white);
+    font-weight:700;
+    letter-spacing:0.6px;
+    font-family: "Orbitron", "Poppins", sans-serif;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+    user-select:none;
+  }
+  .omnitrix{
+    width:44px;
+    height:44px;
+    position:relative;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 15%),
+      conic-gradient(from 200deg at 50% 50%, rgba(0,255,140,0.06), rgba(0,255,140,0.12)),
+      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
+    box-shadow:
+      0 4px 18px rgba(0,0,0,0.8),
+      0 0 18px rgba(0,255,140,0.06),
+      0 0 36px rgba(0,255,140,0.02) inset;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:var(--ease);
+  }
+  .omnitrix::after{
+    content:"";
+    position:absolute;
+    width:70%;
+    height:70%;
+    border-radius:50%;
+    background: radial-gradient(circle at 40% 35%, rgba(0,0,0,0.45), rgba(0,0,0,0.7)),
+                radial-gradient(circle at 55% 60%, rgba(0,255,140,0.08), transparent 40%),
+                linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    box-shadow:
+      0 0 18px rgba(0,255,140,0.35),
+      inset 0 -4px 12px rgba(0,0,0,0.6);
+    transform:scale(0.98);
+  }
+  .omnitrix .core{
+    width:28px;height:28px;border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF30, #00FF8C 40%, #002614 100%);
+    box-shadow: 0 0 10px rgba(0,255,140,0.9), 0 6px 10px rgba(0,0,0,0.6);
+    transform:translateZ(20px);
+  }
+  .omnitrix.pulse::before{
+    content:"";
+    position:absolute;
+    width:120px;height:120px;border-radius:50%;
+    left:50%;top:50%;transform:translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(0,255,140,0.04), transparent 40%);
+    animation:omniPulse 4.2s ease-in-out infinite;
+    pointer-events:none;
+    z-index:-1;
+  }
+  @keyframes omniPulse{
+    0%{transform:translate(-50%,-50%) scale(0.6); opacity:0.9}
+    60%{transform:translate(-50%,-50%) scale(1.6); opacity:0.06}
+    100%{transform:translate(-50%,-50%) scale(2.4); opacity:0}
+  }
+
+  /* Nav links */
+  .nav a{
+    color:var(--white);
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:8px;
+    font-weight:600;
+    letter-spacing:0.6px;
+    font-size:0.95rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+  .nav a:hover{
+    color:#000;
+    background:var(--accent);
+    box-shadow: 0 8px 24px rgba(0,255,140,0.14), 0 2px 12px rgba(0,0,0,0.6);
+    transform:translateY(-2px);
+  }
+
+  .cta{
+    padding:8px 14px;
+    border-radius:10px;
+    background:linear-gradient(180deg, rgba(0,255,140,0.08), rgba(255,255,255,0.02));
+    border:1px solid rgba(0,255,140,0.25);
+    color:var(--white);
+    font-weight:700;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 26px rgba(0,255,140,0.06);
+    cursor:pointer;
+  }
+  .cta:hover{
+    color:#000;
+    background:var(--accent);
+    box-shadow: 0 18px 46px rgba(0,255,140,0.18);
+    transform:translateY(-3px) scale(1.02);
+  }
+
+  /* Page container */
+  .container{
+    width:min(1100px,calc(100% - 40px));
+    margin:120px auto 64px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:48px;
+  }
+
+  /* Hero */
+  .hero{
+    display:flex;
+    gap:36px;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+    min-height:56vh;
+  }
+
+  .hero-left{
+    flex:1;
+    max-width:680px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:flex-start;
+    z-index:20;
+    position:relative;
+  }
+
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 16px;
+    border-radius:999px;
+    background:linear-gradient(90deg, rgba(0,255,140,0.08), rgba(0,255,140,0.02));
+    box-shadow: 0 6px 18px rgba(0,255,140,0.06), 0 6px 24px rgba(0,0,0,0.6);
+    font-weight:700;
+    color:var(--accent);
+    border:1px solid rgba(0,255,140,0.18);
+  }
+
+  .title{
+    margin:0;
+    font-family:"Orbitron","Poppins",sans-serif;
+    font-weight:800;
+    color:var(--accent);
+    font-size: clamp(1.9rem, 3.4vw, 3.6rem);
+    letter-spacing: -0.015em;
+    line-height:1.03;
+    text-shadow:
+      0 2px 0 rgba(0,0,0,0.6),
+      0 6px 28px rgba(0,255,140,0.12),
+      -2px 4px 8px rgba(0,0,0,0.6);
+    transform-style:preserve-3d;
+  }
+
+  /* Extruded text effect using multiple text-shadows for 3D slice */
+  .title.glow{
+    color:var(--accent);
+    text-shadow:
+      0 1px 0 rgba(0,0,0,0.6),
+      0 3px 14px rgba(0,255,140,0.14),
+      0 12px 30px rgba(0,0,0,0.6),
+      0 0 18px rgba(0,255,140,0.22),
+      0 0 34px rgba(0,255,140,0.08);
+  }
+
+  .subtitle{
+    color:var(--muted);
+    margin:0;
+    font-size:1.05rem;
+    max-width:52ch;
+  }
+
+  .hero-ctas{
+    display:flex;
+    gap:16px;
+    margin-top:12px;
+    align-items:center;
+  }
+  .btn{
+    padding:14px 20px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,0.04);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.24));
+    color:var(--white);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 18px rgba(0,255,140,0.04);
+    transition:var(--ease);
+  }
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(0,255,140,0.12), rgba(0,255,140,0.06));
+    border: 1px solid rgba(0,255,140,0.3);
+    color:#00160b;
+    color:var(--white);
+  }
+  .btn:hover{
+    transform:translateY(-6px) scale(1.02);
+    box-shadow: 0 30px 50px rgba(0,0,0,0.6), 0 0 44px rgba(0,255,140,0.18);
+  }
+  .btn.glow{
+    background:linear-gradient(180deg, var(--accent), #00d67a);
+    color:#000;
+    text-shadow:none;
+    box-shadow: 0 8px 34px rgba(0,255,140,0.28), 0 18px 54px rgba(0,255,140,0.12);
+  }
+
+  /* Hero visual - layered 3D panels and animated omnitrix pulse */
+  .hero-vis{
+    width:520px;
+    max-width:44%;
+    min-width:240px;
+    aspect-ratio: 1/1;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    perspective:1200px;
+  }
+  .vis-layer{
+    position:absolute;
+    width:84%;
+    height:84%;
+    border-radius:22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    transform-origin:center;
+    transition:var(--ease);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .vis-layer.layer-back{
+    transform: translateZ(-60px) rotateX(12deg) scale(0.92);
+    background: linear-gradient(180deg, rgba(0,0,0,0.42), rgba(255,255,255,0.01));
+    border-radius:28px;
+  }
+  .vis-layer.layer-mid{
+    transform: translateZ(-20px) rotateX(6deg) scale(0.97);
+  }
+  .vis-layer.layer-front{
+    transform: translateZ(6px) rotateX(0deg);
+    border-radius:18px;
+  }
+  .vis-core{
+    position:relative;
+    width:60%;
+    height:60%;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.06), rgba(0,255,140,0.12) 28%, rgba(0,0,0,0.6));
+    box-shadow: 0 8px 36px rgba(0,255,140,0.1), inset 0 -8px 24px rgba(0,0,0,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:5;
+  }
+  .vis-core::after{
+    content:"";
+    position:absolute;
+    width:120%;
+    height:120%;
+    border-radius:50%;
+    background: radial-gradient(circle at 50% 50%, rgba(0,255,140,0.08), transparent 35%);
+    filter:blur(10px);
+    animation:softPulse 6s infinite ease-in-out;
+  }
+  @keyframes softPulse{
+    0%{transform:scale(0.9);opacity:0.9}
+    50%{transform:scale(1.05);opacity:0.55}
+    100%{transform:scale(0.9);opacity:0.9}
+  }
+
+  /* Features (triangular arrangement) */
+  .features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:36px;
+    place-items:center;
+    margin-top:8px;
+  }
+  .card{
+    width:100%;
+    max-width:320px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
+    border-radius:18px;
+    padding:22px;
+    text-align:center;
+    box-shadow: 0 18px 46px rgba(0,0,0,0.6), 0 6px 24px rgba(0,255,140,0.04);
+    border:1px solid rgba(0,255,140,0.04);
+    transition:var(--ease);
+    transform: translateZ(0);
+  }
+  .card .ico{
+    width:72px;height:72px;margin:0 auto 12px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg, rgba(0,255,140,0.08), rgba(255,255,255,0.02));
+    box-shadow: 0 10px 30px rgba(0,255,140,0.06), inset 0 -6px 12px rgba(0,0,0,0.45);
+    font-size:1.6rem;color:var(--accent);
+  }
+  .card h3{margin:8px 0 6px; color:var(--white); font-family:"Poppins","Orbitron",sans-serif;}
+  .card p{margin:0;color:var(--muted)}
+
+  .card:hover{
+    transform:translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(0,255,140,0.12);
+    border-color: rgba(0,255,140,0.18);
+    filter:brightness(1.02);
+  }
+
+
+  /* Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8); /* More opaque background */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.open {
+  display: flex;
+  opacity: 1;
+}
+
+.modal {
+  width: min(400px, calc(100% - 48px));
+  background: var(--card);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), 0 0 44px rgba(0, 255, 140, 0.1);
+  border: 1px solid rgba(0, 255, 140, 0.2);
+  position: relative;
+  text-align: center;
+}
+
+.modal h3 {
+  margin: 0 0 24px;
+  font-family: "Poppins", "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.modal .modal-cta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.modal .btn {
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  border: none;
+  flex: 1;
+  max-width: 140px;
+  box-shadow: 0 6px 18px rgba(0, 255, 140, 0.8);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.modal .btn.signup {
+  background: var(--accent);
+  color: #000;
+}
+
+.modal .btn.signup:hover {
+  background: #00d67a;
+}
+
+.modal .btn.login {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.modal .btn.login:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+.close-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: 24px;
+  line-height: 34px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-x:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+  /* Modal */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:200;
+    transition:opacity 0.2s ease;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    width:min(560px,calc(100% - 48px));
+    background:var(--card);
+    border-radius:14px;
+    padding:22px;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.8), 0 0 44px rgba(0,255,140,0.06);
+    border:1px solid rgba(0,255,140,0.12);
+    position:relative;
+  }
+  .modal h3{margin:4px 0 8px;font-family:"Poppins","Orbitron",sans-serif;}
+  .modal p{margin:0 0 18px;color:var(--muted)}
+  .modal .modal-cta{
+    display:flex;
+    gap:12px;
+    justify-content:flex-end;
+  }
+  .modal .btn{
+    padding:10px 14px;border-radius:10px;font-weight:700;
+  }
+  .close-x{
+    position:absolute; right:12px; top:12px;
+    width:36px; height:36px; border-radius:8px;
+    display:inline-grid; place-items:center;
+    background:transparent; border:1px solid rgba(255,255,255,0.02);
+    cursor:pointer;
+  }
+  .close-x:hover{ background:rgba(255,255,255,0.02) }
+
+  /* Footer */
+  footer{
+    margin-top:auto;
+    padding:26px 0 42px;
+    color:#AAA;
+    text-align:center;
+    position:relative;
+  }
+  .footer-sep{
+    height:2px;
+    background:linear-gradient(90deg, transparent, rgba(0,255,140,0.18), transparent);
+    width:min(680px,80%);
+    margin:0 auto 18px;
+    border-radius:4px;
+    box-shadow: 0 6px 28px rgba(0,255,140,0.06);
+  }
+  footer a{color:#AAA;text-decoration:none;padding:6px 10px;border-radius:6px;}
+  footer a:hover{color:#000;background:var(--accent);box-shadow: 0 8px 24px rgba(0,255,140,0.12);}
+
+  /* small screens and responsiveness */
+  @media (max-width:900px){
+    .hero{flex-direction:column-reverse; gap:28px; align-items:center;}
+    .hero-vis{max-width:68%;}
+    .nav{left:12px; right:12px; transform:none; width:calc(100% - 24px); flex-wrap:wrap; gap:8px;}
+    .nav-center{order:3; width:100%; justify-content:center; gap:14px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.02)}
+    .nav-left{order:1}
+    .nav-right{order:2}
+    .container{margin-top:140px}
+    .features{grid-template-columns:1fr; gap:18px}
+    .vis-layer{width:92%; height:92%}
+    .title{font-size:clamp(1.6rem,5.8vw,2.6rem)}
+    .hero-ctas{flex-direction:column; align-items:stretch; width:100%}
+    .hero-ctas .btn{width:100%}
+  }
+
+  @media (max-width:480px){
+    .logo span{display:none}
+    .omnitrix{width:40px;height:40px}
+    .omnitrix::after{width:60%;height:60%}
+    .nav a{padding:6px 10px;font-size:0.9rem}
+    .container{margin:100px 12px 48px;padding:12px}
+    .hero-left{max-width:100%}
+    .hero-vis{max-width:88%}
+    .modal{padding:16px}
+  }
+
+  /* small finishing touches */
+  .subtle-3d{
+    transform:translateZ(6px);
+  }
+
+/* Modal overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85); /* darker opaque background */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.open {
+  display: flex;
+  opacity: 1;
+}
+
+/* Modal container */
+.modal {
+  width: min(400px, calc(100% - 48px));
+  background: var(--card);
+  border-radius: 16px;
+  padding: 32px 36px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), 0 0 44px rgba(0, 255, 140, 0.1);
+  border: 1px solid rgba(0, 255, 140, 0.2);
+  position: relative;
+  text-align: center;
+}
+
+/* Modal header */
+.modal h3 {
+  margin: 0 0 28px;
+  font-family: "Poppins", "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+/* Container for buttons */
+.modal .modal-cta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Buttons style */
+.modal .btn {
+  flex: 1;
+  max-width: 140px;
+  padding: 14px 0;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0, 255, 140, 0.85);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Sign Up button */
+.modal .btn.signup {
+  background: var(--accent);
+  color: #000;
+}
+
+.modal .btn.signup:hover {
+  background: #00d67a;
+}
+
+/* Login button */
+.modal .btn.login {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.modal .btn.login:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Close button */
+.close-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-x:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+
+</style>
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Main Navigation">
+    <div class="nav-left">
+      <div class="logo" aria-hidden="true">
+        <div class="omnitrix pulse" title="GreyMatter Connect">
+          <div class="core" aria-hidden="true"></div>
+        </div>
+        <div>
+          <div style="font-size:0.95rem">GreyMatter <span style="opacity:0.85">Connect</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-center" role="menu">
+      <a href="#home" role="menuitem">Home</a>
+      <a href="#about" role="menuitem">About</a>
+      <a href="#contact" role="menuitem">Contact</a>
+      <a href="#feedback" role="menuitem">Feedback</a>
+    </div>
+
+    <div class="nav-right">
+      <button class="cta open-modal" aria-haspopup="dialog">Login / Sign Up</button>
+    </div>
+  </nav>
+
+  <main class="container" id="home">
+    <section class="hero" aria-labelledby="main-title">
+      <div class="hero-left">
+        <div class="tag subtle-3d">Connect • Learn • Grow</div>
+        <h1 id="main-title" class="title glow">GreyMatter Connect — The Peer Learning Network</h1>
+        <p class="subtitle">Learn smarter. Connect faster. Grow together. A symmetrical peer network designed to spark collaboration, study sessions, and meaningful progress — all in a neon-futuristic lab aesthetic.</p>
+
+        <div class="hero-ctas">
+          <button class="btn glow open-modal">Get Started</button>
+          <button class="btn open-modal">Explore Peers</button>
+        </div>
+
+        <!-- subtle depth shapes behind the hero content for 3D layering -->
+        <div style="position:absolute; right:-12%; top:8%; width:28%; height:28%; border-radius:20px; background:linear-gradient(180deg, rgba(0,255,140,0.02), transparent); filter:blur(18px); transform:rotate(12deg); opacity:0.9;"></div>
+      </div>
+
+      <div class="hero-vis" aria-hidden="true">
+        <div class="vis-layer layer-back"></div>
+        <div class="vis-layer layer-mid"></div>
+        <div class="vis-layer layer-front">
+          <div class="vis-core" title="Omnitrix-style core">
+            <!-- nested circles to mimic Omnitrix look -->
+            <svg width="56" height="56" viewBox="0 0 100 100" fill="none" aria-hidden="true" style="filter: drop-shadow(0 8px 20px rgba(0,255,140,0.12));">
+              <defs>
+                <radialGradient id="g" cx="30%" cy="30%">
+                  <stop offset="0%" stop-color="#ffffff30"/>
+                  <stop offset="38%" stop-color="#00FF8C"/>
+                  <stop offset="100%" stop-color="#00160b"/>
+                </radialGradient>
+              </defs>
+              <circle cx="50" cy="50" r="44" fill="url(#g)" stroke="rgba(255,255,255,0.04)" stroke-width="2"></circle>
+              <circle cx="50" cy="50" r="22" fill="rgba(0,0,0,0.55)"></circle>
+              <circle cx="50" cy="50" r="12" fill="#00FF8C"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features" aria-label="Features">
+      <article class="card" aria-labelledby="f1">
+        <div class="ico">👥</div>
+        <h3 id="f1">Connect with Peers</h3>
+        <p>Discover study partners with matching goals and schedules. Build study groups that actually stick.</p>
+      </article>
+
+      <article class="card" aria-labelledby="f2">
+        <div class="ico">💬</div>
+        <h3 id="f2">Chat Seamlessly</h3>
+        <p>Real-time chat with organized threads, quick reactions, and pinned resources for every session.</p>
+      </article>
+
+      <article class="card" aria-labelledby="f3">
+        <div class="ico">🧠</div>
+        <h3 id="f3">Host Study Sessions</h3>
+        <p>Schedule, host, and archive focused study sessions with integrated timers and notes.</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- Modal popup (signup) -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modal-title">
+      <button class="close-x" id="closeBtn" aria-label="Close dialog">✕</button>
+      <h3 id="modal-title">Please sign up or log in to continue.</h3>
+      <p>Join GreyMatter Connect to unlock peer matching, chat, and session hosting. Fast sign up — no distractions.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;">
+        <div style="flex:1;background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(255,255,255,0.01)); padding:12px;border-radius:10px;">
+         
+      
+        </div>
+        <div style="width:140px;display:flex;flex-direction:column;gap:8px;">
+          <button class="btn glow" id="signupBtn">Sign Up</button>
+          <button class="btn" id="loginBtn">Log In</button>
+        </div>
+      </div>
+
+      <div style="font-size:0.86rem;color:var(--muted);">By continuing you agree to our <a href="#privacy" style="color:var(--accent)">Privacy Policy</a> and <a href="#tos" style="color:var(--accent)">Terms</a>.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sep" role="separator" aria-hidden="true"></div>
+    <div style="display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap;">
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#feedback">Feedback</a>
+    </div>
+    <div style="margin-top:10px;color:#808080;font-size:0.9rem;">© GreyMatter Connect</div>
+  </footer>
+
+<script>
+  // Minimal inline JS to open/close modal, no reloads.
+  (function(){
+    const overlay = document.getElementById('overlay');
+    const openers = document.querySelectorAll('.open-modal');
+    const closeBtn = document.getElementById('closeBtn');
+    const signupBtn = document.getElementById('signupBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const emailInput = document.getElementById('email');
+
+    function openModal(){
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden','false');
+      setTimeout(()=> emailInput && emailInput.focus(),150);
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(){
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+
+    openers.forEach(btn => btn.addEventListener('click', openModal));
+    closeBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+      if((e.key === 'Enter') && overlay.classList.contains('open') && document.activeElement === emailInput){
+        // simulate signup
+        alert('Thanks — (demo) a signup link would be sent to: ' + (emailInput.value || '[no email]'));
+      }
+    });
+
+    // Minimal interactions for demo buttons
+    signupBtn.addEventListener('click', function(){
+      alert('Sign up flow (demo). Email: ' + (emailInput.value || '[none provided]'));
+    });
+    loginBtn.addEventListener('click', function(){
+      alert('Log in flow (demo).');
+    });
+
+    // Small parallax on mouse move for 3D feeling (subtle, no heavy JS)
+    const heroVis = document.querySelector('.hero-vis');
+    if(heroVis){
+      heroVis.addEventListener('mousemove', function(e){
+        const r = heroVis.getBoundingClientRect();
+        const cx = (e.clientX - r.left) / r.width - 0.5;
+        const cy = (e.clientY - r.top) / r.height - 0.5;
+        document.querySelectorAll('.vis-layer').forEach((L, i) => {
+          const depth = (i - 1) * 6; // -6,0,6
+          L.style.transform = 'translateZ(' + (depth - cx*8) + 'px) rotateX(' + (cy*6) + 'deg) translateX(' + (cx*6) + 'px)';
+        });
+      });
+      heroVis.addEventListener('mouseleave', function(){
+        document.querySelectorAll('.vis-layer').forEach((L,i) => {
+          const depth = (i - 1) * 6;
+          const rot = [12,6,0][i];
+          L.style.transform = (i===0? 'translateZ(-60px) rotateX(12deg) scale(0.92)' : i===1? 'translateZ(-20px) rotateX(6deg) scale(0.97)' : 'translateZ(6px) rotateX(0deg)');
+        });
+      });
+    }
+  })();
+</script>
+</body>
+</html>
