@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GreyMatter Connect — Profile</title>
+<style>
+  /* Theme colors / variables */
+  :root{
+    --bg:#0E0E0E;
+    --card:#1E1E1E;
+    --accent:#00FF8C;
+    --muted:#BDBDBD;
+    --glass: rgba(255,255,255,0.03);
+    --transition: 0.3s ease;
+    --max-width:1100px;
+  }
+
+  /* Base reset */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 400px at 50% 10%, rgba(0,255,140,0.04), transparent 8%),
+                var(--bg);
+    color:#fff;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.4;
+    -webkit-touch-callout:none;
+  }
+
+  /* Container */
+  .wrap{
+    max-width:var(--max-width);
+    margin:86px auto 60px; /* leave space for fixed nav */
+    padding:32px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:28px;
+    align-items:start;
+  }
+
+  /* NAV */
+  header.nav{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .nav-inner{
+    width:100%;
+    max-width:var(--max-width);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  /* Omnitrix-style logo (SVG circle + glowing ring) */
+  .logo{
+    width:44px;height:44px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    border-radius:50%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    box-shadow: 0 6px 18px rgba(0,255,140,0.04), inset 0 -4px 10px rgba(0,0,0,0.6);
+  }
+  .logo svg{display:block; width:34px;height:34px; filter: drop-shadow(0 0 12px rgba(0,255,140,0.25));}
+
+  /* Center nav */
+  nav.center-nav{
+    display:flex;
+    gap:22px;
+    align-items:center;
+    justify-content:center;
+  }
+  .center-nav a{
+    color:var(--muted);
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:8px;
+    transition: all var(--transition);
+    font-weight:600;
+    letter-spacing:0.2px;
+    font-family: "Orbitron", "Poppins", sans-serif;
+    font-size:14px;
+  }
+  .center-nav a:hover{
+    background:var(--accent);
+    color:#000;
+    box-shadow: 0 6px 22px rgba(0,255,140,0.12), 0 0 30px rgba(0,255,140,0.06) inset;
+    transform:translateY(-2px);
+  }
+
+  /* Right actions */
+  .actions{display:flex;gap:12px;align-items:center;}
+  .btn{
+    background:transparent;
+    color:var(--accent);
+    border:1px solid rgba(0,255,140,0.14);
+    padding:8px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:all var(--transition);
+    box-shadow: 0 4px 12px rgba(0,255,140,0.03);
+  }
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(0,255,140,0.09), rgba(0,255,140,0.04));
+    color:#001106;
+    border-color: rgba(0,255,140,0.35);
+  }
+  .btn:hover{
+    transform:translateY(-3px);
+    box-shadow: 0 12px 36px rgba(0,255,140,0.12), 0 4px 12px rgba(0,0,0,0.5) inset;
+  }
+
+  /* HERO / PROFILE HEADER */
+  .hero{
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    padding:28px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,0.03);
+    display:flex;
+    gap:28px;
+    align-items:center;
+    position:relative;
+    overflow:visible;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 2px 0 rgba(255,255,255,0.01) inset;
+  }
+
+  /* radial glow behind hero */
+  .hero:before{
+    content:'';
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    top:-120px;
+    width:680px;
+    height:260px;
+    background: radial-gradient(closest-side, rgba(0,255,140,0.06), transparent 40%);
+    filter: blur(36px);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .hero-left{
+    z-index:2;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+
+  /* Avatar with Omnitrix-style border + pulse */
+  .avatar{
+    width:118px;height:118px;border-radius:50%;
+    background: linear-gradient(135deg, #0f1111, #111416);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    box-shadow:
+      0 8px 26px rgba(0,0,0,0.7),
+      0 10px 40px rgba(0,255,140,0.03);
+    border:6px solid rgba(0,255,140,0.12);
+    transition: all var(--transition);
+  }
+  .avatar-inner{
+    width:84px;height:84px;border-radius:50%;
+    background:linear-gradient(135deg, rgba(0,255,140,0.06), rgba(0,255,140,0.01)), radial-gradient(circle at 30% 25%, rgba(255,255,255,0.03), transparent 30%), #121212;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--accent);
+    font-weight:800;
+    font-family: "Orbitron", "Poppins", sans-serif;
+    font-size:28px;
+    text-shadow: 0 2px 16px rgba(0,255,140,0.24);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.7), inset 0 2px 8px rgba(255,255,255,0.02);
+  }
+
+  /* glowing ring & pulse via pseudo elements */
+  .avatar::after{
+    content:'';
+    position:absolute;
+    left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    width:150px;height:150px;border-radius:50%;
+    background: radial-gradient(circle, rgba(0,255,140,0.06), transparent 35%);
+    filter:blur(18px);
+    z-index:-1;
+    transition:opacity var(--transition);
+    opacity:0.9;
+  }
+  .avatar::before{
+    content:'';
+    position:absolute;
+    left:50%;top:50%;
+    transform:translate(-50%,-50%) scale(1);
+    width:150px;height:150px;border-radius:50%;
+    border:2px solid rgba(0,255,140,0.06);
+    animation: pulse 3.2s infinite;
+    z-index:-2;
+    opacity:0.55;
+  }
+  @keyframes pulse{
+    0%{transform:translate(-50%,-50%) scale(0.98); opacity:0.6}
+    50%{transform:translate(-50%,-50%) scale(1.06); opacity:0.3}
+    100%{transform:translate(-50%,-50%) scale(0.98); opacity:0.6}
+  }
+
+  /* User info */
+  .user-info{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .user-name{
+    font-family: "Orbitron", "Poppins", sans-serif;
+    font-size:22px;
+    font-weight:800;
+    color:var(--accent);
+    text-shadow: 0 6px 20px rgba(0,255,140,0.10);
+    letter-spacing:0.6px;
+    margin:0;
+  }
+  .user-role{ color:var(--muted); font-weight:600; font-size:13px; margin:0 }
+  .user-bio{ color:#d0d0d0; font-size:13px; margin-top:6px; max-width:66ch; }
+
+  /* header action buttons */
+  .hero-actions{
+    margin-left:auto;
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  /* DETAILS GRID */
+  .details{
+    display:grid;
+    grid-template-columns: minmax(220px,1fr) 1fr minmax(220px,1fr);
+    gap:22px;
+    align-items:start;
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border-radius:14px;
+    padding:18px;
+    border:1px solid rgba(255,255,255,0.03);
+    background-color:var(--card);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 6px 26px rgba(0,255,140,0.03);
+  }
+  .card h3{
+    margin:0 0 12px 0;
+    font-size:15px;
+    font-family: "Orbitron", "Poppins", sans-serif;
+    color:var(--accent);
+    letter-spacing:0.6px;
+  }
+
+  /* Skills / Badges */
+  .badges{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .badge{
+    padding:8px 12px;
+    background:linear-gradient(180deg, rgba(0,255,140,0.04), rgba(255,255,255,0.01));
+    color:var(--accent);
+    border-radius:999px;
+    font-weight:700;
+    font-size:13px;
+    box-shadow: 0 6px 18px rgba(0,255,140,0.04);
+    border:1px solid rgba(0,255,140,0.06);
+    transition: all var(--transition);
+  }
+  .badge:hover{
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 36px rgba(0,255,140,0.12);
+  }
+
+  /* Peers */
+  .peers{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .peer{
+    width:46px;height:46px;border-radius:50%;
+    background:#111;
+    border:3px solid rgba(0,255,140,0.08);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 4px 12px rgba(0,255,140,0.02) inset;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--accent);
+    font-weight:700;
+    transform: translateY(0);
+    transition: all var(--transition);
+  }
+  .peer:hover{ transform: translateY(-6px) scale(1.06); box-shadow: 0 18px 40px rgba(0,255,140,0.08) }
+
+  /* Activity summary */
+  .stats{ display:flex; gap:12px; align-items:center; }
+  .stat{
+    flex:1;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    padding:10px 12px;
+    border-radius:12px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .stat h4{ margin:0; font-size:15px; color:var(--accent); font-family:"Orbitron","Poppins",sans-serif }
+  .stat p{ margin:6px 0 0 0; color:var(--muted); font-weight:700; font-size:13px }
+
+  /* Footer */
+  footer{
+    margin-top:6px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.03);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    color:#AAA;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  }
+  footer a{ color:#AAA; text-decoration:none; transition:all var(--transition) }
+  footer a:hover{ color:var(--accent); text-shadow:0 6px 20px rgba(0,255,140,0.06) }
+
+  /* Modal (signup/login) */
+  .modal{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+    pointer-events:none;
+    opacity:0;
+    transition: all var(--transition);
+  }
+  .modal.open{ pointer-events:auto; opacity:1 }
+  .modal .overlay{
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    transition:all var(--transition);
+  }
+  .modal-panel{
+    position:relative;
+    width:min(520px, calc(100% - 40px));
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border-radius:12px;
+    padding:22px;
+    border:1px solid rgba(0,255,140,0.08);
+    box-shadow: 0 28px 80px rgba(0,0,0,0.8), 0 8px 26px rgba(0,255,140,0.04);
+    transform: translateY(12px) scale(0.98);
+    transition: all var(--transition);
+    z-index:2;
+  }
+  .modal.open .modal-panel{ transform: translateY(0) scale(1) }
+  .modal h3{ margin:0 0 8px 0; color:var(--accent); font-family:"Orbitron","Poppins",sans-serif }
+  .modal p{ margin:0 0 18px 0; color:#d0d0d0 }
+
+  .modal .actions{ justify-content:flex-end; margin-top:8px; }
+  .ghost{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    color:#ddd;
+    padding:8px 12px;
+    border-radius:10px;
+    margin-right:auto;
+  }
+
+  /* small helper */
+  .muted{ color:var(--muted); font-size:13px }
+
+  /* Responsive */
+  @media (max-width:980px){
+    .details{ grid-template-columns:1fr; }
+    .hero{ flex-direction:column; align-items:flex-start; gap:18px; padding:20px; }
+    .hero-actions{ width:100%; display:flex; justify-content:space-between; }
+    .wrap{ margin:100px 16px 60px; padding:18px; }
+  }
+  @media (max-width:480px){
+    .logo{ width:40px;height:40px }
+    .avatar{ width:96px;height:96px; border-width:5px }
+    .avatar-inner{ width:68px;height:68px; font-size:22px }
+    .center-nav{ display:none }
+    header.nav{ height:72px }
+    .wrap{ margin-top:96px }
+    .hero:before{ display:none }
+  }
+</style>
+</head>
+<body>
+  <!-- Fixed Navigation -->
+  <header class="nav" role="banner">
+    <div class="nav-inner" role="navigation" aria-label="Main navigation">
+      <div class="brand" style="min-width:160px;">
+        <div class="logo" aria-hidden="true" title="GreyMatter">
+          <!-- Simple Omnitrix-style SVG -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="g" cx="40%" cy="35%">
+                <stop offset="0%" stop-color="#00FFBD" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#00FF8C" stop-opacity="0.6"/>
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="40" fill="url(#g)" stroke="rgba(0,0,0,0.45)" stroke-width="6" />
+            <path d="M50 28 L62 72 L38 72 Z" fill="#021103" opacity="0.9"/>
+            <circle cx="50" cy="38" r="6" fill="#09FF9E" />
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;line-height:1;">
+          <div style="font-weight:800; font-family: 'Orbitron','Poppins',sans-serif; color:var(--accent); font-size:14px">GreyMatter</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px">Connect</div>
+        </div>
+      </div>
+
+      <nav class="center-nav" aria-label="Primary">
+        <a href="#" tabindex="1">Home</a>
+        <a href="#" tabindex="2">About</a>
+        <a href="#" tabindex="3">Contact</a>
+        <a href="#" tabindex="4">Feedback</a>
+      </nav>
+
+      <div class="actions" style="min-width:160px; justify-content:flex-end;">
+        <button class="btn" id="loginBtn" aria-haspopup="dialog">Log In</button>
+        <button class="btn primary" id="signupBtn">Sign Up</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page content -->
+  <main class="wrap" role="main">
+    <!-- Profile Header / Hero -->
+    <section class="hero" aria-labelledby="profile-heading">
+      <div class="hero-left">
+        <div class="avatar" aria-hidden="true">
+          <div class="avatar-inner">AP</div>
+        </div>
+        <div class="user-info">
+          <h1 id="profile-heading" class="user-name">Hari Gajja
+
+          </h1>
+          <div class="user-role">Peer Mentor • Neuroscience Enthusiast</div>
+          <div class="user-bio">Building bridges between learning and doing — I host study sessions, mentor peers, and collect badges along the way. Focused on cognition, UX, and collaborative problem solving.</div>
+        </div>
+      </div>
+
+      <div class="hero-actions" aria-hidden="true">
+        <button class="btn" data-action="message">Message</button>
+        <button class="btn" data-action="edit">Edit Profile</button>
+        <button class="btn primary" data-action="start">Start Session</button>
+      </div>
+    </section>
+
+    <!-- Profile Details Section -->
+    <section class="details" aria-label="Profile details">
+      <!-- left: Skills / Interests -->
+      <aside class="card" aria-labelledby="skills-heading">
+        <h3 id="skills-heading">Skills & Interests</h3>
+        <div class="badges" aria-hidden="false">
+          <span class="badge">Neuroscience</span>
+          <span class="badge">UX Research</span>
+          <span class="badge">Study Sessions</span>
+          <span class="badge">Public Speaking</span>
+          <span class="badge">Data Visualization</span>
+          <span class="badge">Peer Mentoring</span>
+        </div>
+      </aside>
+
+      <!-- center: Activity summary -->
+      <div class="card" aria-labelledby="activity-heading">
+        <h3 id="activity-heading">Activity Summary</h3>
+        <div class="stats" style="margin-top:6px;">
+          <div class="stat">
+            <h4>124</h4>
+            <p>Study Sessions</p>
+          </div>
+          <div class="stat">
+            <h4>86</h4>
+            <p>Messages</p>
+          </div>
+          <div class="stat">
+            <h4>12</h4>
+            <p>Badges</p>
+          </div>
+        </div>
+
+        <div style="height:14px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;">
+          <div class="muted">Recent: Led "Cognitive Models" session • 2 days ago</div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn" data-action="details">View</button>
+            <button class="btn primary" data-action="start2">Start Session</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- right: Peers / Friends -->
+      <aside class="card" aria-labelledby="peers-heading">
+        <h3 id="peers-heading">Connections</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="peers" aria-hidden="false">
+            <div class="peer" title="Sam A">SA</div>
+            <div class="peer" title="Rina M">RM</div>
+            <div class="peer" title="Jon D">JD</div>
+            <div class="peer" title="Priya K">PK</div>
+            <div class="peer" title="More" style="background:transparent;border:2px dashed rgba(0,255,140,0.05);color:var(--muted)">+5</div>
+          </div>
+
+          <div class="muted">Mutual sessions: 24</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+      <div style="display:flex;gap:18px;align-items:center;">
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Feedback</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Modal: Signup / Login prompt -->
+  <div class="modal" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="overlay" id="modalOverlay"></div>
+    <div class="modal-panel" role="document">
+      <h3 id="modalTitle">Please sign up or log in to continue</h3>
+      <p>To use messaging, start sessions, or edit profiles, you'll need a GreyMatter account. It's quick and free.</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
+        <button class="ghost" id="modalClose">Close</button>
+        <div style="margin-left:auto;display:flex;gap:10px;">
+          <button class="btn" id="modalLogin">Log In</button>
+          <button class="btn primary" id="modalSignup">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Minimal JS only for signup/login popup interactions
+  (function(){
+    const modal = document.getElementById('signupModal');
+    const overlay = document.getElementById('modalOverlay');
+    const openBtns = document.querySelectorAll('[data-action], #signupBtn, #loginBtn');
+    const closeBtn = document.getElementById('modalClose');
+    const modalSignup = document.getElementById('modalSignup');
+    const modalLogin = document.getElementById('modalLogin');
+
+    function openModal(e){
+      // only open signup/login modal (no real auth)
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      // set focus to first action
+      modalSignup.focus();
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+
+    openBtns.forEach(btn=>{
+      btn.addEventListener('click', function(e){
+        // if button is native signup/login, show modal too
+        openModal();
+        e.preventDefault();
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+
+    // Buttons in modal - for demo they just close and console log
+    modalSignup.addEventListener('click', function(){ console.log('Sign Up clicked'); closeModal(); });
+    modalLogin.addEventListener('click', function(){ console.log('Log In clicked'); closeModal(); });
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    // Accessibility: trap focus minimally (simple)
+    document.addEventListener('focus', function(ev){
+      if(modal.classList.contains('open') && !modal.contains(ev.target)){
+        ev.stopPropagation();
+        modalSignup.focus();
+      }
+    }, true);
+  })();
+</script>
+</body>
+</html>
